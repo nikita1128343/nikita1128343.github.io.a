@@ -42,32 +42,31 @@
      <img id="kartinka" src="https://www.rosphoto.com/images/u/articles/1510/7_5.jpg" alt="" width="300px" height="300px">
 <h2 id="section-contact">Форма — контактные данные</h2>
 
-  <form action="/save" method="post" autocomplete="on">
-    <!-- 1) ФИО (текстовое поле) -->
+  <form action="https://httpbin.org/post" method="post" enctype="application/x-www-form-urlencoded" autocomplete="on">
+    
     <label for="fullname">ФИО:</label><br>
     <input type="text" id="fullname" name="fullname" placeholder="Иванов Иван Иванович" required minlength="6"><br><br>
 
-    <!-- 2) Телефон (поле tel) -->
+    
     <label for="phone">Телефон:</label><br>
     <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___--" required minlength="11"><br><br>
 
-    <!-- 3) e-mail (поле email) -->
+    
     <label for="email">E-mail:</label><br>
     <input type="email" id="email" name="email" placeholder="name@example.com" required><br><br>
 
-    <!-- 4) дата рождения (поле даты) -->
+
     <label for="bdate">Дата рождения:</label><br>
     <input type="date" id="bdate" name="birthdate" required><br><br>
 
-<!-- 5) пол (радиокнопки) -->
+
     <fieldset>
       <legend>Пол:</legend>
-      <label><input type="radio" name="gender" value="male"> Мужской</label>
+      <label><input type="radio" name="gender" value="male" required> Мужской</label>
       <label><input type="radio" name="gender" value="female"> Женский</label>      
     </fieldset>
     <br>
 
-    <!-- 6) любимый язык программирования (множественный выбор из списка) -->
     <label for="langs">Любимый(е) язык(и) программирования (выберите один или несколько):</label><br>
     <select id="langs" name="languages[]" multiple size="6">
       <option value="Pascal">Pascal</option>
@@ -84,16 +83,16 @@
     </select>
     <br><br>
 
-    <!-- 7) биография (многострочное текстовое поле) -->
+    
     <label for="bio">Краткая биография:</label><br>
     <textarea id="bio" name="biography" rows="6" cols="60" placeholder="Расскажите о себе..." required></textarea>
     <br><br>
 
-    <!-- 8) с контрактом ознакомлен (а) (чекбокс) -->
+    
     <label><input type="checkbox" id="agree" name="agree" required> С контрактом ознакомлен(а)</label>
     <br><br>
 
-    <!-- 9) кнопка «Сохранить» -->
+    
     <input type="submit" value="Сохранить">
   </form>
 
