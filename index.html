@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <ul>
+       <li>1.<a href="http://kubsu.ru">Абсолютная гиперссылка на главную страницу сайта kubsu.ru</a></li>
+       <li>2.<a href="https://kubsu.ru">Абсолютную на главную сайта kubsu.ru в протоколе https</a></li>
+        <li>3. <a href="https://kubsu.ru/"><img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Flower_jtca001.jpg" alt="Картинка-ссылка: КубГУ" width="150" height="150"></a> </li> 
+        <li>4. <a href="pages/fackulrty.html">Сокращённая внутренняя страница </a></li>
+        <li>5. <a href="/">Сокращённая ссылка на главную страницу </a></li>
+        <li>6. <a href="#kartinka">Картинка с ID</a></li>
+        <li>7. <a href="https://example.com/search?q=example&lang=english&page=2">Поиск с 3 параметрами </a></li>
+        <li>8. <a href="https://example.com/item?id=qwer">Ссылка с параметром id (id=qwer)</a></li>
+        <li>9. <a href="page.html">Относительная на страницу в текущем каталоге</a> </li>
+        <li>10. <a href="about/about.html">Относительная: в каталоге about </a></li>
+        <li>11. <a href="about/../index.html">относительную на страницу в каталоге уровнем выше текущего</a></li>
+        <li>12. <a href="assets/pages/../../page.html">Относительная на страницу в каталоге уровнем выше текущего</a></li>
+        <li>13. контекстная <a href="https://moodle.kubsu.ru/my/">ссылка</a> в слове </li>
+        <li>14. <a href="https://www.kubsu.ru/index.php#region-sidebar-second">Ссылка на фрагмент страницы стороннего сайта</a></li>
+        <li>15. ссылки из прямоугольных и круглых областей картинки(ниже)</li>
+        <li>16. <a href="">Пустой href </a></li>
+        <li>17. <a >Ссылка без href</a></li>
+        <li>18. <a href="https://www.kubsu.ru/ru/taxonomy/term/12" rel="nofollow">ссылку, по которой запрещен переход поисковикам</a></li>  
+        <li>19. <a href="https://www.kubsu.ru/ru/timetable" rel="noindex">запрещенную для индексации поисковиками</a></li>
+        <li>20.<ol>
+        <li><a href="https://www.kubsu.ru/ru/university/library" title="библиотека">Первая страница</a></li>
+        <li><a href="https://test.kubsu.ru/" title="тест">Вторая страница</a></li>
+        <li><a href="https://www.kubsu.ru/ru/media" title="медиа-центр">Третья страница</a></li>
+      </ol> </li>   
+        <li>21. <a href="ftp://user:password@ftp.example.com/public/file.zip">Ссылка на файл на сервере FTP с авторизацией</a></li>
+    </ul>
+     <img src="https://a.d-cd.net/QPlYDrSKPm_WxZbYlQr_nwoMyv8-960.jpg" alt="" width="300px" height="300px" usemap="#map4">
+    <map name="map4">
+      <area shape="rect" coords="0,0,100,100" href="https://dzen.ru/" alt="dzen" title="Прямоугольная область">
+      <area shape="circle" coords="150,150,50" href="https://www.kubsu.ru/index.php" alt="kubsu" title="Круглая область">
+    </map>
+     <img id="kartinka" src="https://www.rosphoto.com/images/u/articles/1510/7_5.jpg" alt="" width="300px" height="300px">
+<h2 id="section-contact">Форма — контактные данные</h2>
+
+  <form action="/save" method="post" autocomplete="on">
+    <!-- 1) ФИО (текстовое поле) -->
+    <label for="fullname">ФИО:</label><br>
+    <input type="text" id="fullname" name="fullname" placeholder="Иванов Иван Иванович" required minlength="6"><br><br>
+
+    <!-- 2) Телефон (поле tel) -->
+    <label for="phone">Телефон:</label><br>
+    <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___--" required minlength="11"><br><br>
+
+    <!-- 3) e-mail (поле email) -->
+    <label for="email">E-mail:</label><br>
+    <input type="email" id="email" name="email" placeholder="name@example.com" required><br><br>
+
+    <!-- 4) дата рождения (поле даты) -->
+    <label for="bdate">Дата рождения:</label><br>
+    <input type="date" id="bdate" name="birthdate" required><br><br>
+
+<!-- 5) пол (радиокнопки) -->
+    <fieldset>
+      <legend>Пол:</legend>
+      <label><input type="radio" name="gender" value="male"> Мужской</label>
+      <label><input type="radio" name="gender" value="female"> Женский</label>      
+    </fieldset>
+    <br>
+
+    <!-- 6) любимый язык программирования (множественный выбор из списка) -->
+    <label for="langs">Любимый(е) язык(и) программирования (выберите один или несколько):</label><br>
+    <select id="langs" name="languages[]" multiple size="6">
+      <option value="Pascal">Pascal</option>
+      <option value="C">C</option>
+      <option value="C++">C++</option>
+      <option value="JavaScript">JavaScript</option>
+      <option value="PHP">PHP</option>
+      <option value="Python">Python</option>
+      <option value="Java">Java</option>
+      <option value="Haskel">Haskel</option>
+      <option value="Clojure">Clojure</option>
+      <option value="Prolog">Prolog</option>
+      <option value="Scala">Scala</option>
+    </select>
+    <br><br>
+
+    <!-- 7) биография (многострочное текстовое поле) -->
+    <label for="bio">Краткая биография:</label><br>
+    <textarea id="bio" name="biography" rows="6" cols="60" placeholder="Расскажите о себе..." required></textarea>
+    <br><br>
+
+    <!-- 8) с контрактом ознакомлен (а) (чекбокс) -->
+    <label><input type="checkbox" id="agree" name="agree" required> С контрактом ознакомлен(а)</label>
+    <br><br>
+
+    <!-- 9) кнопка «Сохранить» -->
+    <input type="submit" value="Сохранить">
+  </form>
+
+  
+</body>
+</html>
