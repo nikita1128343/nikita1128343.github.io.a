@@ -1,165 +1,174 @@
-#include <iostream>
-#include <fstream>
-#include <windows.h>
-
+#include <iostream> 
+#include <fstream> 
+#include <windows.h> 
 using namespace std;
 
-struct StudentRecord {
-    string studentName;
-    int grade1;
-    int grade2;
-    int grade3;
-    int grade4;
-} student;
+struct Person
+{
+    string name;
+    int first_mark;
+    int second_mark;
+    int third_mark;
+    int forth_mark;
+} A;
 
-int main() {
+void main() {
     setlocale(LC_ALL, "rus");
-    const char* pathAnswerFile = "C:/Users/s0177102/source/repos/file/ANSWER.bin";
-    const char* pathRequestFile = "C:/Users/s0177102/source/repos/file/REQUEST.bin";
 
-    ofstream answerFileStream;
-    ifstream requestFileStream;
-    fstream studentFileStream;
+    const char* nameA = "C:/Users/Admin/source/repos/ANSWER.bin";
+    ofstream fR;
+    ifstream fA;
+    fstream fN;
 
-    while (true) {
-        cout << "Введите имя студента:" << endl;
-        cin >> student.studentName;
+    const char* nameN = "C:/Users/Admin/source/repos/REQUEST.bin";
+    long pred_size;
+    int answer;
 
-        cout << "Введите 4 оценки:" << endl;
-        cin >> student.grade1 >> student.grade2 >> student.grade3 >> student.grade4;
+    while (true)
+    {
+        cout << "Введите имя: ";
+        cin >> A.name;
+        cout << "Введите 4 оценки (каждая от 0 до 100):" << endl;
 
-        // Создаваем путь для файла студента
-        string filename = "C:/Users/s0177102/source/repos/file/" + student.studentName + ".bin";
-        const char* studentFileName = filename.c_str();
+        cout << "Первая оценка: ";
+        cin >> A.first_mark;
+        cout << "Вторая оценка: ";
+        cin >> A.second_mark;
+        cout << "Третья оценка: ";
+        cin >> A.third_mark;
+        cout << "Четвертая оценка: ";
+        cin >> A.forth_mark;
 
-        // Запись данных в файл студента
-        answerFileStream.open(studentFileName, ios::app | ios::binary);
-        answerFileStream.write((char*)&student, sizeof(student));
-        answerFileStream.close();
+        // Проверка корректности введенных данных
+        if (A.first_mark < 0 || A.first_mark > 100 ||
+            A.second_mark < 0 || A.second_mark > 100 ||
+            A.third_mark < 0 || A.third_mark > 100 ||
+            A.forth_mark < 0 || A.forth_mark > 100) {
+            cout << "Ошибка: все оценки должны быть в диапазоне от 0 до 100!" << endl;
+            continue;
+        }
 
-        // Запись имени в файл запросов
-        requestFileStream.open(pathRequestFile, ios::app | ios::binary);
-        requestFileStream.write((char*)&student.studentName, sizeof(student.studentName));
-        requestFileStream.close();
+        string s = "C:/Users/Admin/source/repos/" + A.name + ".bin";
+        const char* nameR = s.c_str();
 
-        // Открытие файла студента для чтения
-        studentFileStream.open(studentFileName, ios::binary);
-        studentFileStream.seekg(0, ios::end);
-        long previousSize = studentFileStream.tellg();
-        studentFileStream.seekg(0, ios::beg);
+        fR.open(nameR, ios::app | ios::binary);
+        fR.write((char*)&A, sizeof(A));
+        fR.close();
 
-        // Ожидание появления новых данных
-        while (true) {
+        fN.open(nameN, ios::app | ios::binary);
+        fN.write((char*)&A.name, sizeof(A.name));
+        fN.close();
+
+        fA.open(nameR, ios::binary);
+        fA.seekg(0, ios::end);
+        pred_size = fA.tellg();
+
+        while (pred_size >= fA.tellg())
+        {
             Sleep(100);
-            studentFileStream.seekg(0, ios::end);
-            if (studentFileStream.tellg() > previousSize) {
-                break;
-            }
+            fA.seekg(0, ios::end);
         }
-        studentFileStream.seekg(previousSize, ios::beg);
-        int responseCode;
-        studentFileStream.read((char*)&responseCode, sizeof(responseCode));
-        studentFileStream.close();
 
-        switch (responseCode) {
-            case 0:
-                cout << "Обучающийся отчислен" << endl;
-                break;
-            case 1:
-                cout << "Нет стипендии" << endl;
-                break;
-            case 2:
-                cout << "Есть стипендия" << endl;
-                break;
-            case 3:
-                cout << "Повышенная стипендия" << endl;
-                break;
-            default:
-                cout << "Неизвестный ответ" << endl;
+        fA.seekg(pred_size, ios::beg);
+        fA.read((char*)&answer, sizeof(answer));
+        fA.close();
+
+        cout << "Результат для студента " << A.name << ":" << endl;
+        cout << "Сумма баллов: " << (A.first_mark + A.second_mark + A.third_mark + A.forth_mark) << endl;
+
+        switch (answer) {
+        case 2: { cout << "Оценка: 2 (неудовлетворительно)"; break; }
+        case 3: { cout << "Оценка: 3 (удовлетворительно)"; break; }
+        case 4: { cout << "Оценка: 4 (хорошо)"; break; }
+        case 5: { cout << "Оценка: 5 (отлично)"; break; }
+        default: { cout << "Ошибка вычисления оценки"; break; }
         }
+        cout << endl << "------------------------" << endl;
     }
 }
-                                                 
-    #include <iostream>
-#include <fstream>
-#include <windows.h>
 
+
+#include <iostream> 
+#include <fstream> 
+#include <windows.h> 
 using namespace std;
 
-struct StudentData {
+struct Person
+{
     string name;
-    int grade1;
-    int grade2;
-    int grade3;
-    int grade4;
-} studentInfo;
+    int first_mark;
+    int second_mark;
+    int third_mark;
+    int forth_mark;
+}B;
+
+int answer;
+long size_pred;
+long size_pred_name;
+
+int calculateGrade(int score) {
+    if (score >= 0 && score <= 49) return 2;   // неудовлетворительно
+    if (score >= 50 && score <= 74) return 3;  // удовлетворительно
+    if (score >= 75 && score <= 89) return 4;  // хорошо
+    if (score >= 90 && score <= 100) return 5; // отлично
+    return 2; // по умолчанию неудовлетворительно
+}
 
 int main() {
+    ifstream fR;
+    ofstream fA;
+    ifstream fN;
     setlocale(LC_ALL, "rus");
-    const char* requestFilePath = "C:/Users/s0177102/source/repos/file/REQUEST.bin";
-    const char* answerFilePath = "C:/Users/s0177102/source/repos/file/ANSWER.bin";
 
-    ifstream requestStream;
-    ofstream answerStream;
-    ifstream studentFile;
+    const char* nameN = "C:/Users/Admin/source/repos/REQUEST.bin";
+    const char* nameA = "C:/Users/Admin/source/repos/ANSWER.bin";
 
-    long prevSizeName = 0;
+    fN.open(nameN, ios::binary);
+    fN.seekg(0, ios::end);
+    size_pred_name = fN.tellg();
+    fN.close();
 
-    cout << "Сервер запущен и работает..." << endl;
+    cout << "Server is working" << endl;
 
-    // Начальное определение размера файла запросов
-    requestStream.open(requestFilePath, ios::binary);
-    requestStream.seekg(0, ios::end);
-    prevSizeName = requestStream.tellg();
-    requestStream.close();
+    while (true)
+    {
+        fN.open(nameN, ios::binary);
+        fN.seekg(0, ios::end);
 
-    while (true) {
-        // Ожидание появления новых запросов
-        requestStream.open(requestFilePath, ios::binary);
-        requestStream.seekg(0, ios::end);
-        while (prevSizeName >= requestStream.tellg()) {
+        while (size_pred_name >= fN.tellg())
+        {
             Sleep(100);
-            requestStream.seekg(0, ios::end);
-        }
-        requestStream.seekg(prevSizeName, ios::beg);
-        requestStream.read((char*)&studentInfo.name, sizeof(studentInfo.name));
-        prevSizeName = requestStream.tellg();
-        requestStream.close();
-
-        // Формируем путь к файлу студента
-        string filename = "C:/Users/s0177102/source/repos/file/" + studentInfo.name + ".bin";
-        const char* studentFileName = filename.c_str();
-
-        // Открываем файл студента
-        studentFile.open(studentFileName, ios::binary);
-        studentFile.seekg(0, ios::beg);
-        studentFile.read((char*)&studentInfo, sizeof(studentInfo));
-        studentFile.close();
-
-        int marks[4] = {studentInfo.grade1, studentInfo.grade2, studentInfo.grade3, studentInfo.grade4};
-        int sumMarks = 0;
-        int responseCode = -1;
-
-        // Анализ оценок
-        for (int i = 0; i < 4; ++i) {
-            if (marks[i] == 2)
-                responseCode = 0; // отчислен
-            if (marks[i] == 3)
-                responseCode = 1; // нет стипендии
-            sumMarks += marks[i];
+            fN.seekg(0, ios::end);
         }
 
-        // Выставляем ответ в зависимости от суммы
-        if (sumMarks == 20)
-            responseCode = 3; // повышенная стипендия
-        else if (responseCode == -1)
-            responseCode = 2; // есть стипендия
+        fN.seekg(size_pred_name, ios::beg);
+        fN.read((char*)&B.name, sizeof(B.name));
+        size_pred_name = fN.tellg();
+        fN.close();
 
-        // Отправка ответа обратно клиенту
-        answerStream.open(studentFileName, ios::binary | ios::app);
-        answerStream.write((char*)&responseCode, sizeof(responseCode));
-        answerStream.close();
+        string s = "C:/Users/Admin/source/repos/" + B.name + ".bin";
+        const char* nameR = s.c_str();
 
-        cout << "Обработка завершена, ответ отправлен клиенту." << endl;
+        fR.open(nameR, ios::binary);
+        fR.seekg(ios::beg, 0);
+        fR.read((char*)&B, sizeof(B));
+
+        // Рассчитываем общую сумму баллов
+        int total_score = B.first_mark + B.second_mark + B.third_mark + B.forth_mark;
+
+        // Определяем оценку по критериям
+        answer = calculateGrade(total_score);
+
+        fR.close();
+
+        cout << "Сервер обработал данные студента " << B.name << endl;
+        cout << "Баллы: " << B.first_mark << ", " << B.second_mark << ", "
+            << B.third_mark << ", " << B.forth_mark << endl;
+        cout << "Сумма баллов: " << total_score << ", Оценка: " << answer << endl;
+
+        fA.open(nameR, ios::binary | ios::app);
+        fA.write((char*)&answer, sizeof(answer));
+        fA.close();
     }
-}                                             
+}
+                                                        
