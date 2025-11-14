@@ -171,4 +171,169 @@ int main() {
         fA.close();
     }
 }
-                                                        
+
+   #include <iostream>
+#include <fstream>
+#include <windows.h>
+#include <cstring>
+using namespace std;
+
+struct Person
+{
+    char name[32];
+    int first_mark;
+    int second_mark;
+    int third_mark;
+    int forth_mark;
+} A;
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+
+    const char* REQUEST = "C:/Users/s0195879/source/repos/file/REQUEST.bin";
+
+    while (true)
+    {
+        cout << "Введите имя: ";
+        string temp;
+        cin >> temp;
+
+        memset(A.name, 0, 32);
+        strncpy(A.name, temp.c_str(), 31);
+
+        cout << "Введите 4 оценки (0–100):\n";
+        cin >> A.first_mark >> A.second_mark >> A.third_mark >> A.forth_mark;
+
+        if (A.first_mark < 0 || A.first_mark > 100 ||
+            A.second_mark < 0 || A.second_mark > 100 ||
+            A.third_mark < 0 || A.third_mark > 100 ||
+            A.forth_mark < 0 || A.forth_mark > 100)
+        {
+            cout << "Ошибка: оценки должны быть 0–100.\n";
+            continue;
+        }
+
+        // путь файла студента
+        string path = "C:/Users/s0195879/source/repos/file/" + temp + ".bin";
+        const char* studentFile = path.c_str();
+
+        // отправляем запрос серверу
+        ofstream fReq(REQUEST, ios::binary | ios::app);
+        fReq.write((char*)A.name, 32);
+        fReq.close();
+
+        // записываем структуру студента
+        ofstream fStud(studentFile, ios::binary | ios::app);
+        fStud.write((char*)&A, sizeof(A));
+        fStud.close();
+
+        // ждём ответа сервера
+        ifstream fWait(studentFile, ios::binary);
+        fWait.seekg(0, ios::end);
+        long oldSize = fWait.tellg();
+        fWait.close();
+
+        long newSize = oldSize;
+        while (newSize == oldSize)
+        {
+            Sleep(100);
+            ifstream fCheck(studentFile, ios::binary);
+            fCheck.seekg(0, ios::end);
+            newSize = fCheck.tellg();
+            fCheck.close();
+        }
+
+        // читаем последнюю запись (ответ)
+        ifstream fRead(studentFile, ios::binary);
+        fRead.seekg(oldSize, ios::beg);
+        int answer;
+        fRead.read((char*)&answer, sizeof(answer));
+        fRead.close();
+
+        // вывод результата
+        int sum = A.first_mark + A.second_mark + A.third_mark + A.forth_mark;
+
+        cout << "Сумма баллов: " << sum << endl;
+        cout << "Оценка: " << answer << endl;
+        cout << "------------------------------\n";
+    }
+}
+ #include <iostream>
+#include <fstream>
+#include <windows.h>
+#include <cstring>
+using namespace std;
+
+struct Person
+{
+    char name[32];
+    int first_mark;
+    int second_mark;
+    int third_mark;
+    int forth_mark;
+} B;
+
+int calculateGrade(int total)
+{
+    if (total <= 49) return 2;
+    if (total <= 74) return 3;
+    if (total <= 89) return 4;
+    return 5;
+}
+
+int main()
+{
+    const char* REQUEST = "C:/Users/s0195879/source/repos/file/REQUEST.bin";
+
+    long prevSize = 0;
+
+    cout << "SERVER STARTED...\n";
+
+    while (true)
+    {
+        // Ждём новых запросов
+        ifstream fReq(REQUEST, ios::binary);
+        fReq.seekg(0, ios::end);
+        long curSize = fReq.tellg();
+        fReq.close();
+
+        if (curSize == prevSize)
+        {
+            Sleep(100);
+            continue;
+        }
+
+        // читаем новое имя
+        fReq.open(REQUEST, ios::binary);
+        fReq.seekg(prevSize, ios::beg);
+        char name[32];
+        fReq.read(name, 32);
+        prevSize += 32;
+        fReq.close();
+
+        string file = "C:/Users/s0195879/source/repos/file/" + string(name) + ".bin";
+
+        // читаем студента
+        ifstream fSt(file, ios::binary);
+        fSt.seekg(0, ios::end);
+        long size = fSt.tellg();
+        fSt.seekg(size - sizeof(Person), ios::beg);
+        fSt.read((char*)&B, sizeof(Person));
+        fSt.close();
+
+        int total = B.first_mark + B.second_mark + B.third_mark + B.forth_mark;
+        int grade = calculateGrade(total);
+
+        // записываем ответ
+        ofstream fAns(file, ios::binary | ios::app);
+        fAns.write((char*)&grade, sizeof(grade));
+        fAns.close();
+
+        cout << "Обработан студент: " << B.name
+             << " | Баллы: " << total
+             << " | Оценка: " << grade << endl;
+    }
+}
+                                                                 
+
