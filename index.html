@@ -356,3 +356,228 @@ int main() {
     } 
     return 0;
 }                                                    
+#include <iostream> 
+#include <fstream> 
+#include <windows.h> 
+#include <string>
+using namespace std; 
+
+struct Person 
+{ 
+    char name[50];  // Фиксированный размер для надежности
+    int first_mark; 
+    int second_mark; 
+    int third_mark; 
+    int forth_mark; 
+} A; 
+
+int main() {
+    setlocale(LC_ALL, "rus"); 
+    
+    const char* nameN = "REQUEST.bin"; 
+    long pred_size; 
+    int answer; 
+    
+    while (true) 
+    { 
+        cout << "Введите имя: "; 
+        cin >> A.name; 
+        cout << "Введите 4 оценки (каждая от 0 до 100):" << endl; 
+        
+        cout << "Первая оценка: ";
+        cin >> A.first_mark;
+        cout << "Вторая оценка: ";
+        cin >> A.second_mark;
+        cout << "Третья оценка: ";
+        cin >> A.third_mark;
+        cout << "Четвертая оценка: ";
+        cin >> A.forth_mark;
+        
+        // Проверка корректности введенных данных
+        if (A.first_mark < 0 || A.first_mark > 100 ||
+            A.second_mark < 0 || A.second_mark > 100 ||
+            A.third_mark < 0 || A.third_mark > 100 ||
+            A.forth_mark < 0 || A.forth_mark > 100) {
+            cout << "Ошибка: все оценки должны быть в диапазоне от 0 до 100!" << endl;
+            continue;
+        }
+        
+        string s = string(A.name) + ".bin"; 
+        const char* nameR = s.c_str(); 
+        
+        // Записываем данные студента в его файл
+        ofstream fR(nameR, ios::binary); 
+        if (!fR) {
+            cout << "Ошибка создания файла студента!" << endl;
+            continue;
+        }
+        fR.write((char*)&A, sizeof(A)); 
+        fR.close(); 
+        
+        // Добавляем имя в очередь запросов
+        fstream fN(nameN, ios::app | ios::binary); 
+        if (!fN) {
+            cout << "Ошибка открытия файла запросов!" << endl;
+            continue;
+        }
+        fN.write(A.name, sizeof(A.name)); 
+        fN.close(); 
+        
+        cout << "Ожидание ответа от сервера..." << endl;
+        
+        // Ожидаем ответ от сервера
+        bool answer_received = false;
+        int attempts = 0;
+        
+        while (!answer_received && attempts < 50) { // Максимум 5 секунд ожидания
+            ifstream fA(nameR, ios::binary); 
+            if (fA) {
+                fA.seekg(0, ios::end);
+                long current_size = fA.tellg();
+                
+                // Если файл содержит данные помимо структуры Person
+                if (current_size > static_cast<long>(sizeof(A))) {
+                    // Читаем ответ с конца файла
+                    fA.seekg(sizeof(A), ios::beg); // Ответ записан после структуры
+                    fA.read((char*)&answer, sizeof(answer));
+                    
+                    if (fA.good()) {
+                        answer_received = true;
+                        cout << "Результат для студента " << A.name << ":" << endl;
+                        int total_score = A.first_mark + A.second_mark + A.third_mark + A.forth_mark;
+                        cout << "Сумма баллов: " << total_score << endl;
+                        
+                        switch (answer) { 
+                            case 2: {cout << "Оценка: 2 (неудовлетворительно)"; break; } 
+                            case 3: {cout << "Оценка: 3 (удовлетворительно)"; break; } 
+                            case 4: {cout << "Оценка: 4 (хорошо)"; break; } 
+                            case 5: {cout << "Оценка: 5 (отлично)"; break; } 
+                            default: {cout << "Ошибка вычисления оценки"; break; }
+                        } 
+                        cout << endl << "------------------------" << endl;
+                    }
+                }
+                fA.close();
+            }
+            
+            if (!answer_received) {
+                Sleep(100); // Ждем 100ms
+                attempts++;
+            }
+        }
+        
+        if (!answer_received) {
+            cout << "Сервер не ответил в течение 5 секунд!" << endl;
+        }
+    } 
+    return 0;
+}
+  #include <iostream> 
+#include <fstream> 
+#include <windows.h> 
+#include <string>
+using namespace std; 
+
+struct Person 
+{ 
+    char name[50];  // Фиксированный размер для надежности
+    int first_mark; 
+    int second_mark; 
+    int third_mark; 
+    int forth_mark; 
+} B; 
+
+int answer; 
+long size_pred_name = 0;
+
+// Функция расчета оценки
+int calculateGrade(int total_score) {
+    if (total_score >= 0 && total_score <= 199) return 2;   // 0-199 = 2
+    if (total_score >= 200 && total_score <= 299) return 3; // 200-299 = 3
+    if (total_score >= 300 && total_score <= 359) return 4; // 300-359 = 4
+    if (total_score >= 360 && total_score <= 400) return 5; // 360-400 = 5
+    return 2; // по умолчанию
+}
+
+int main() { 
+    setlocale(LC_ALL, "rus"); 
+    
+    const char* nameN = "REQUEST.bin"; 
+    
+    // Создаем файл запросов если его нет
+    fstream testFile(nameN, ios::app | ios::binary);
+    testFile.close();
+    
+    cout << "Сервер запущен и ожидает запросы..." << endl; 
+    
+    while (true) 
+    { 
+        ifstream fN(nameN, ios::binary); 
+        if (!fN.is_open()) {
+            cout << "Ошибка открытия файла запросов!" << endl;
+            Sleep(1000);
+            continue;
+        }
+        
+        fN.seekg(0, ios::end); 
+        long current_size = fN.tellg();
+        
+        // Если есть новые запросы
+        if (current_size > size_pred_name) {
+            fN.seekg(size_pred_name, ios::beg); 
+            
+            // Обрабатываем все новые запросы
+            while (fN.tellg() < current_size) {
+                fN.read(B.name, sizeof(B.name)); 
+                
+                string s = string(B.name) + ".bin"; 
+                const char* nameR = s.c_str(); 
+                
+                cout << "Обработка студента: " << B.name << endl;
+                
+                // Читаем данные студента
+                ifstream fR(nameR, ios::binary); 
+                if (fR.is_open()) {
+                    fR.read((char*)&B, sizeof(B)); 
+                    
+                    if (fR.good()) {
+                        // Рассчитываем общую сумму баллов
+                        int total_score = B.first_mark + B.second_mark + B.third_mark + B.forth_mark;
+                        
+                        // Определяем оценку
+                        answer = calculateGrade(total_score);
+                        
+                        fR.close(); 
+                        
+                        cout << "Данные студента " << B.name << ":" << endl;
+                        cout << "Баллы: " << B.first_mark << ", " << B.second_mark 
+                             << ", " << B.third_mark << ", " << B.forth_mark << endl;
+                        cout << "Сумма баллов: " << total_score << ", Оценка: " << answer << endl;
+                        cout << "----------------------------------------" << endl;
+                        
+                        // Записываем ответ в файл студента
+                        ofstream fA(nameR, ios::binary | ios::app); 
+                        if (fA.is_open()) {
+                            fA.write((char*)&answer, sizeof(answer)); 
+                            fA.close();
+                        } else {
+                            cout << "Ошибка записи ответа для " << B.name << endl;
+                        }
+                    } else {
+                        cout << "Ошибка чтения данных студента: " << B.name << endl;
+                        fR.close();
+                    }
+                } else {
+                    cout << "Не удалось открыть файл студента: " << nameR << endl;
+                }
+                
+                // Обновляем позицию для следующего чтения
+                size_pred_name = fN.tellg();
+            }
+        }
+        fN.close(); 
+        
+        Sleep(500); // Проверяем новые запросы каждые 500ms
+    } 
+    return 0;
+}                                                               
