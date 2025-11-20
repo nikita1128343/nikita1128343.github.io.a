@@ -1,591 +1,172 @@
-#include <iostream> 
-#include <fstream> 
-#include <windows.h> 
-using namespace std;
-
-struct Person
-{
-    string name;
-    int first_mark;
-    int second_mark;
-    int third_mark;
-    int forth_mark;
-} A;
-
-void main() {
-    setlocale(LC_ALL, "rus");
-
-    const char* nameA = "C:/Users/Admin/source/repos/ANSWER.bin";
-    ofstream fR;
-    ifstream fA;
-    fstream fN;
-
-    const char* nameN = "C:/Users/Admin/source/repos/REQUEST.bin";
-    long pred_size;
-    int answer;
-
-    while (true)
-    {
-        cout << "Введите имя: ";
-        cin >> A.name;
-        cout << "Введите 4 оценки (каждая от 0 до 100):" << endl;
-
-        cout << "Первая оценка: ";
-        cin >> A.first_mark;
-        cout << "Вторая оценка: ";
-        cin >> A.second_mark;
-        cout << "Третья оценка: ";
-        cin >> A.third_mark;
-        cout << "Четвертая оценка: ";
-        cin >> A.forth_mark;
-
-        // Проверка корректности введенных данных
-        if (A.first_mark < 0 || A.first_mark > 100 ||
-            A.second_mark < 0 || A.second_mark > 100 ||
-            A.third_mark < 0 || A.third_mark > 100 ||
-            A.forth_mark < 0 || A.forth_mark > 100) {
-            cout << "Ошибка: все оценки должны быть в диапазоне от 0 до 100!" << endl;
-            continue;
-        }
-
-        string s = "C:/Users/Admin/source/repos/" + A.name + ".bin";
-        const char* nameR = s.c_str();
-
-        fR.open(nameR, ios::app | ios::binary);
-        fR.write((char*)&A, sizeof(A));
-        fR.close();
-
-        fN.open(nameN, ios::app | ios::binary);
-        fN.write((char*)&A.name, sizeof(A.name));
-        fN.close();
-
-        fA.open(nameR, ios::binary);
-        fA.seekg(0, ios::end);
-        pred_size = fA.tellg();
-
-        while (pred_size >= fA.tellg())
-        {
-            Sleep(100);
-            fA.seekg(0, ios::end);
-        }
-
-        fA.seekg(pred_size, ios::beg);
-        fA.read((char*)&answer, sizeof(answer));
-        fA.close();
-
-        cout << "Результат для студента " << A.name << ":" << endl;
-        cout << "Сумма баллов: " << (A.first_mark + A.second_mark + A.third_mark + A.forth_mark) << endl;
-
-        switch (answer) {
-        case 2: { cout << "Оценка: 2 (неудовлетворительно)"; break; }
-        case 3: { cout << "Оценка: 3 (удовлетворительно)"; break; }
-        case 4: { cout << "Оценка: 4 (хорошо)"; break; }
-        case 5: { cout << "Оценка: 5 (отлично)"; break; }
-        default: { cout << "Ошибка вычисления оценки"; break; }
-        }
-        cout << endl << "------------------------" << endl;
-    }
-}
-
-
-#include <iostream> 
-#include <fstream> 
-#include <windows.h> 
-using namespace std;
-
-struct Person
-{
-    string name;
-    int first_mark;
-    int second_mark;
-    int third_mark;
-    int forth_mark;
-}B;
-
-int answer;
-long size_pred;
-long size_pred_name;
-
-int calculateGrade(int score) {
-    if (score >= 0 && score <= 49) return 2;   // неудовлетворительно
-    if (score >= 50 && score <= 74) return 3;  // удовлетворительно
-    if (score >= 75 && score <= 89) return 4;  // хорошо
-    if (score >= 90 && score <= 100) return 5; // отлично
-    return 2; // по умолчанию неудовлетворительно
-}
-
-int main() {
-    ifstream fR;
-    ofstream fA;
-    ifstream fN;
-    setlocale(LC_ALL, "rus");
-
-    const char* nameN = "C:/Users/Admin/source/repos/REQUEST.bin";
-    const char* nameA = "C:/Users/Admin/source/repos/ANSWER.bin";
-
-    fN.open(nameN, ios::binary);
-    fN.seekg(0, ios::end);
-    size_pred_name = fN.tellg();
-    fN.close();
-
-    cout << "Server is working" << endl;
-
-    while (true)
-    {
-        fN.open(nameN, ios::binary);
-        fN.seekg(0, ios::end);
-
-        while (size_pred_name >= fN.tellg())
-        {
-            Sleep(100);
-            fN.seekg(0, ios::end);
-        }
-
-        fN.seekg(size_pred_name, ios::beg);
-        fN.read((char*)&B.name, sizeof(B.name));
-        size_pred_name = fN.tellg();
-        fN.close();
-
-        string s = "C:/Users/Admin/source/repos/" + B.name + ".bin";
-        const char* nameR = s.c_str();
-
-        fR.open(nameR, ios::binary);
-        fR.seekg(ios::beg, 0);
-        fR.read((char*)&B, sizeof(B));
-
-        // Рассчитываем общую сумму баллов
-        int total_score = B.first_mark + B.second_mark + B.third_mark + B.forth_mark;
-
-        // Определяем оценку по критериям
-        answer = calculateGrade(total_score);
-
-        fR.close();
-
-        cout << "Сервер обработал данные студента " << B.name << endl;
-        cout << "Баллы: " << B.first_mark << ", " << B.second_mark << ", "
-            << B.third_mark << ", " << B.forth_mark << endl;
-        cout << "Сумма баллов: " << total_score << ", Оценка: " << answer << endl;
-
-        fA.open(nameR, ios::binary | ios::app);
-        fA.write((char*)&answer, sizeof(answer));
-        fA.close();
-    }
-}
-
-            cout << "Четвертая оценка: ";
-        cin >> A.forth_mark;
-        
-        // Проверка корректности введенных данных
-        if (A.first_mark < 0 || A.first_mark > 100 ||
-            A.second_mark < 0 || A.second_mark > 100 ||
-            A.third_mark < 0 || A.third_mark > 100 ||
-            A.forth_mark < 0 || A.forth_mark > 100) {
-            cout << "Ошибка: все оценки должны быть в диапазоне от 0 до 100!" << endl;
-            continue;
-        }
-        
-        string s = string(A.name) + ".bin"; 
-        const char* nameR = s.c_str(); 
-        
-        // Записываем данные студента в его файл
-        ofstream fR(nameR, ios::binary); 
-        if (!fR) {
-            cout << "Ошибка создания файла студента!" << endl;
-            continue;
-        }
-        fR.write((char*)&A, sizeof(A)); 
-        fR.close(); 
-        
-        // Добавляем имя в очередь запросов
-        fstream fN(nameN, ios::app | ios::binary); 
-        if (!fN) {
-            cout << "Ошибка открытия файла запросов!" << endl;
-            continue;
-        }
-        fN.write(A.name, sizeof(A.name)); 
-        fN.close(); 
-        
-        cout << "Ожидание ответа от сервера..." << endl;
-        
-        // Ожидаем ответ от сервера
-        bool answer_received = false;
-        int attempts = 0;
-        
-        while (!answer_received && attempts < 50) { // Максимум 5 секунд ожидания
-            ifstream fA(nameR, ios::binary); 
-            if (fA) {
-                fA.seekg(0, ios::end);
-                long current_size = fA.tellg();
-                
-                // Если файл содержит данные помимо структуры Person
-                if (current_size > static_cast<long>(sizeof(A))) {
-                    // Читаем ответ с конца файла
-                    fA.seekg(sizeof(A), ios::beg); // Ответ записан после структуры
-                    fA.read((char*)&answer, sizeof(answer));
-                    
-                    if (fA.good()) {
-                        answer_received = true;
-                        cout << "Результат для студента " << A.name << ":" << endl;
-                        int total_score = A.first_mark + A.second_mark + A.third_mark + A.forth_mark;
-                        cout << "Сумма баллов: " << total_score << endl;
-                        
-                        switch (answer) { 
-                            case 2: {cout << "Оценка: 2 (неудовлетворительно)"; break; } 
-                            case 3: {cout << "Оценка: 3 (удовлетворительно)"; break; } 
-                            case 4: {cout << "Оценка: 4 (хорошо)"; break; } 
-                            case 5: {cout << "Оценка: 5 (отлично)"; break; } 
-                            default: {cout << "Ошибка вычисления оценки"; break; }
-                        } 
-                        cout << endl << "------------------------" << endl;
-                    }
-                }
-                fA.close();
-            }
-            
-            if (!answer_received) {
-                Sleep(100); // Ждем 100ms
-                attempts++;
-            }
-        }
-        
-        if (!answer_received) {
-            cout << "Сервер не ответил в течение 5 секунд!" << endl;
-        }
-    } 
-    return 0;
-}
-  #include <iostream> 
-#include <fstream> 
-#include <windows.h> 
-#include <string>
-using namespace std; 
-
-struct Person 
-{ 
-    char name[50];  // Фиксированный размер для надежности
-    int first_mark; 
-    int second_mark; 
-    int third_mark; 
-    int forth_mark; 
-} B; 
-
-int answer; 
-long size_pred_name = 0;
-
-// Функция расчета оценки
-int calculateGrade(int total_score) {
-    if (total_score >= 0 && total_score <= 199) return 2;   // 0-199 = 2
-    if (total_score >= 200 && total_score <= 299) return 3; // 200-299 = 3
-    if (total_score >= 300 && total_score <= 359) return 4; // 300-359 = 4
-    if (total_score >= 360 && total_score <= 400) return 5; // 360-400 = 5
-    return 2; // по умолчанию
-}
-
-int main() { 
-    setlocale(LC_ALL, "rus"); 
-    
-    const char* nameN = "REQUEST.bin"; 
-    
-    // Создаем файл запросов если его нет
-    fstream testFile(nameN, ios::app | ios::binary);
-    testFile.close();
-    
-    cout << "Сервер запущен и ожидает запросы..." << endl; 
-    
-    while (true) 
-    { 
-        ifstream fN(nameN, ios::binary); 
-        if (!fN.is_open()) {
-            cout << "Ошибка открытия файла запросов!" << endl;
-            Sleep(1000);
-            continue;
-        }
-        
-        fN.seekg(0, ios::end); 
-        long current_size = fN.tellg();
-        
-        // Если есть новые запросы
-        if (current_size > size_pred_name) {
-            fN.seekg(size_pred_name, ios::beg); 
-            
-            // Обрабатываем все новые запросы
-            while (fN.tellg() < current_size) {
-                fN.read(B.name, sizeof(B.name)); 
-                
-                string s = string(B.name) + ".bin"; 
-                const char* nameR = s.c_str(); 
-                
-                cout << "Обработка студента: " << B.name << endl;
-                
-                // Читаем данные студента
-                ifstream fR(nameR, ios::binary); 
-                if (fR.is_open()) {
-                    fR.read((char*)&B, sizeof(B)); 
-                    
-                    if (fR.good()) {
-                        // Рассчитываем общую сумму баллов
-                        int total_score = B.first_mark + B.second_mark + B.third_mark + B.forth_mark;
-                        
-                        // Определяем оценку
-                        answer = calculateGrade(total_score);
-                        
-                        fR.close(); 
-                        
-                        cout << "Данные студента " << B.name << ":" << endl;
-                        cout << "Баллы: " << B.first_mark << ", " << B.second_mark 
-                             << ", " << B.third_mark << ", " << B.forth_mark << endl;
-                        cout << "Сумма баллов: " << total_score << ", Оценка: " << answer << endl;
-                        cout << "----------------------------------------" << endl;
-                        
-                        // Записываем ответ в файл студента
-                        ofstream fA(nameR, ios::binary | ios::app); 
-                        if (fA.is_open()) {
-                            fA.write((char*)&answer, sizeof(answer)); 
-                            fA.close();
-                        } else {
-                            cout << "Ошибка записи ответа для " << B.name << endl;
-                        }
-                    } else {
-                        cout << "Ошибка чтения данных студента: " << B.name << endl;
-                        fR.close();
-                    }
-                } else {
-                    cout << "Не удалось открыть файл студента: " << nameR << endl;
-                }
-                
-                // Обновляем позицию для следующего чтения
-                size_pred_name = fN.tellg();
-            }
-        }
-        fN.close(); 
-        
-        Sleep(500); // Проверяем новые запросы каждые 500ms
-    } 
-    return 0;
-}                                                               
 #include <iostream>
 #include <fstream>
 #include <windows.h>
-#include <string>
-#include <cstring>
-
 using namespace std;
 
-struct Person
+struct ClientInfo
 {
-    char name[50];
-    int first_mark;
-    int second_mark;
-    int third_mark;
-    int forth_mark;
-} A;
+    char surname[25];  // фамилия
+    int h;             // рост
+    int w;             // вес
+} UserData;
 
 int main() {
     setlocale(LC_ALL, "rus");
-    
-    const char* nameN = "REQUEST.bin";
-    
+
+    const char* reqFile = "C:/Users/Admin/source/repos/client/REQUEST.bin";
+    const char* ansFile = "C:/Users/Admin/source/repos/client/ANSWER.bin";
+
+    ofstream outReq;
+    ifstream inAns;
+    long lastSize = 0;
+    int res;
+
+    outReq.open(reqFile, ios::binary | ios::app);
+    outReq.close();
+
+    inAns.open(ansFile, ios::binary | ios::app);
+    inAns.close();
+
     while (true)
     {
-        cout << "Введите имя: ";
-        string tempName;
-        cin >> tempName;
-        strncpy_s(A.name, tempName.c_str(), sizeof(A.name) - 1);
-        A.name[sizeof(A.name) - 1] = '\0';
-        
-        cout << "Введите 4 оценки (каждая от 0 до 100):" << endl;
-        cout << "Первая оценка: ";
-        cin >> A.first_mark;
-        cout << "Вторая оценка: ";
-        cin >> A.second_mark;
-        cout << "Третья оценка: ";
-        cin >> A.third_mark;
-        cout << "Четвертая оценка: ";
-        cin >> A.forth_mark;
-        
-        if (A.first_mark < 0 || A.first_mark > 100 ||
-            A.second_mark < 0 || A.second_mark > 100 ||
-            A.third_mark < 0 || A.third_mark > 100 ||
-            A.forth_mark < 0 || A.forth_mark > 100) {
-            cout << "Ошибка: все оценки должны быть в диапазоне от 0 до 100!" << endl;
+        cout << "Введите данные: Фамилия Рост Вес" << endl;
+        cin >> UserData.surname >> UserData.h >> UserData.w;
+        cout << UserData.surname << " " << UserData.h << " " << UserData.w << endl;
+
+        outReq.open(reqFile, ios::app | ios::binary);
+        if (!outReq.is_open()) {
+            cout << "Не удалось открыть файл запросов!" << endl;
             continue;
         }
-        
-        // Записываем запрос в общий файл
-        ofstream fN(nameN, ios::binary | ios::app);
-        fN.write(reinterpret_cast<const char*>(&A), sizeof(A));
-        fN.close();
-        
-        cout << "Запрос отправлен. Ожидание ответа..." << endl;
-        
-        // Ожидаем ответ в персональном файле
-        string personalFile = string(A.name) + ".bin";
-        ifstream fA(personalFile, ios::binary);
-        
-        if (!fA) {
-            cout << "Ошибка открытия файла ответа" << endl;
-            continue;
-        }
-        
-        // Ждем появления ответа
-        int answer = 0;
+        outReq.write((char*)&UserData, sizeof(UserData));
+        outReq.close();
+
+        inAns.open(ansFile, ios::binary);
+        inAns.seekg(0, ios::end);
+        lastSize = inAns.tellg();
+        inAns.close();
+
         bool gotAnswer = false;
-        
-        while (!gotAnswer) {
-            fA.seekg(0, ios::end);
-            streampos fileSize = fA.tellg();
-            
-            if (fileSize >= static_cast<streampos>(sizeof(answer))) {
-                fA.seekg(0, ios::beg);
-                fA.read(reinterpret_cast<char*>(&answer), sizeof(answer));
+        while (!gotAnswer)
+        {
+            Sleep(100);
+            inAns.open(ansFile, ios::binary);
+            if (!inAns.is_open()) {
+                cout << "Не удалось открыть файл ответов!" << endl;
+                continue;
+            }
+
+            inAns.seekg(0, ios::end);
+            long currSize = inAns.tellg();
+
+            if (currSize > lastSize)
+            {
+                inAns.seekg(lastSize, ios::beg);
+                inAns.read((char*)&res, sizeof(res));
                 gotAnswer = true;
-            } else {
-                fA.close();
-                Sleep(500);
-                fA.open(personalFile, ios::binary);
             }
+            inAns.close();
         }
-        fA.close();
-        
-        // Удаляем файл ответа после чтения
-        remove(personalFile.c_str());
-        
-        cout << "Результат для студента " << A.name << ":" << endl;
-        cout << "Оценки: " << A.first_mark << ", " << A.second_mark 
-             << ", " << A.third_mark << ", " << A.forth_mark << endl;
-        
-        bool hasDebt = false;
-        bool hasScholarship = false;
-        string scholarshipType = "";
-        
-        // Проверяем задолженности и стипендию
-        if (A.first_mark < 60 || A.second_mark < 60 || 
-            A.third_mark < 60 || A.forth_mark < 60) {
-            hasDebt = true;
-        } else {
-            double average = (A.first_mark + A.second_mark + 
-                            A.third_mark + A.forth_mark) / 4.0;
-            
-            if (average >= 85) {
-                hasScholarship = true;
-                scholarshipType = "повышенная";
-            } else if (average >= 70) {
-                hasScholarship = true;
-                scholarshipType = "обычная";
-            }
+
+        switch (res) {
+        case 0:
+            cout << "Дефицит массы тела\n";
+            break;
+        case 1:
+            cout << "Вес в норме\n";
+            break;
+        case 2:
+            cout << "Избыточная масса тела\n";
+            break;
+        default:
+            cout << "Некорректный ответ сервера: " << res << endl;
         }
-        
-        if (hasDebt) {
-            cout << "Результат: Есть задолженности" << endl;
-        } else if (hasScholarship) {
-            cout << "Результат: Нет задолженностей, назначена " 
-                 << scholarshipType << " стипендия" << endl;
-        } else {
-            cout << "Результат: Нет задолженностей, но стипендия не назначена" << endl;
-        }
-        
-        cout << "------------------------" << endl;
+        cout << "========================================" << endl;
     }
     return 0;
 }
-                                                
 #include <iostream>
 #include <fstream>
 #include <windows.h>
-#include <string>
-#include <cstring>
-
 using namespace std;
 
-struct Person
+struct ClientRequest
 {
-    char name[50];
-    int first_mark;
-    int second_mark;
-    int third_mark;
-    int forth_mark;
-} B;
+    char lastName[25];
+    int heightVal;
+    int weightVal;
+} CurrentRequest;
+
+int result;
+long filePos = 0;
 
 int main() {
+    ifstream inFile;
+    ofstream outFile;
     setlocale(LC_ALL, "rus");
-    
-    const char* nameN = "REQUEST.bin";
-    
-    cout << "Server is working" << endl;
-    
-    // Создаем файл запросов если его нет
-    ofstream temp(nameN, ios::binary | ios::app);
-    temp.close();
-    
-    streampos lastSize = 0;
-    
+
+    const char* inputFile = "C:/Users/Admin/source/repos/client/REQUEST.bin";
+    const char* outputFile = "C:/Users/Admin/source/repos/client/ANSWER.bin";
+
+    cout << "сервер запущен" << endl;
+
+    outFile.open(outputFile, ios::binary | ios::app);
+    outFile.close();
+
+    inFile.open(inputFile, ios::binary | ios::app);
+    inFile.close();
+
+    inFile.open(inputFile, ios::binary);
+    inFile.seekg(0, ios::end);
+    filePos = inFile.tellg();
+    inFile.close();
+
     while (true)
     {
-        ifstream fN(nameN, ios::binary | ios::ate);
-        
-        if (!fN) {
+        inFile.open(inputFile, ios::binary);
+        if (!inFile.is_open()) {
+            cout << "Ошибка открытия входного файла!" << endl;
             Sleep(1000);
             continue;
         }
-        
-        streampos currentSize = fN.tellg();
-        
-        if (currentSize > lastSize) {
-            // Есть новые запросы
-            fN.seekg(lastSize, ios::beg);
-            
-            while (fN.read(reinterpret_cast<char*>(&B), sizeof(B))) {
-                cout << "Обработка запроса для: " << B.name << endl;
-                
-                // Проверяем корректность данных
-                if (B.first_mark < 0 || B.first_mark > 100 ||
-                    B.second_mark < 0 || B.second_mark > 100 ||
-                    B.third_mark < 0 || B.third_mark > 100 ||
-                    B.forth_mark < 0 || B.forth_mark > 100) {
-                    cout << "Ошибка: некорректные оценки у студента " << B.name << endl;
-                    continue;
-                }
-                
-                // Проверяем задолженности
-                bool hasDebt = (B.first_mark < 60 || B.second_mark < 60 || 
-                               B.third_mark < 60 || B.forth_mark < 60);
-                
-                int result = 0; // 0 - есть долги, 1 - обычная стипендия, 2 - повышенная
-                
-                if (!hasDebt) {
-                    double average = (B.first_mark + B.second_mark + 
-                                    B.third_mark + B.forth_mark) / 4.0;
-                    
-                    if (average >= 85) {
-                        result = 2; // Повышенная стипендия
-                    } else if (average >= 70) {
-                        result = 1; // Обычная стипендия
-                    }
-                }
-                
-                // Создаем файл ответа для клиента
-                string responseFile = string(B.name) + ".bin";
-                ofstream fA(responseFile, ios::binary);
-                fA.write(reinterpret_cast<const char*>(&result), sizeof(result));
-                fA.close();
-                
-                cout << "Обработан студент " << B.name << ": ";
-                if (hasDebt) {
-                    cout << "Есть задолженности" << endl;
-                } else if (result == 2) {
-                    cout << "Повышенная стипендия" << endl;
-                } else if (result == 1) {
-                    cout << "Обычная стипендия" << endl;
-                } else {
-                    cout << "Без стипендии" << endl;
-                }
-            }
-            
-            lastSize = currentSize;
+
+        inFile.seekg(0, ios::end);
+
+        while (filePos >= inFile.tellg())
+        {
+            inFile.close();
+            Sleep(100);
+            inFile.open(inputFile, ios::binary);
+            inFile.seekg(0, ios::end);
         }
-        
-        fN.close();
-        Sleep(1000);
+
+        inFile.seekg(filePos, ios::beg);
+        inFile.read((char*)&CurrentRequest, sizeof(CurrentRequest));
+        filePos = inFile.tellg();
+        inFile.close();
+
+        double heightMeters = CurrentRequest.heightVal * 0.01;
+        double bmi = CurrentRequest.weightVal / (heightMeters * heightMeters);
+
+        if (bmi < 18.5)
+            result = 0;
+        else if (bmi < 25)
+            result = 1;
+        else
+            result = 2;
+
+        outFile.open(outputFile, ios::binary | ios::app);
+        if (!outFile.is_open()) {
+            cout << "Ошибка открытия выходного файла!" << endl;
+            continue;
+        }
+        outFile.write((char*)&result, sizeof(result));
+        outFile.close();
+
+        cout << "Обработан клиент: " << CurrentRequest.lastName
+            << " (рост: " << CurrentRequest.heightVal
+            << ", вес: " << CurrentRequest.weightVal
+            << ") - код результата: " << result << endl;
     }
     return 0;
-}
+}                                                                
