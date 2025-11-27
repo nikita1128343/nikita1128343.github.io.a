@@ -13,8 +13,8 @@ struct ClientInfo
 int main() {
     setlocale(LC_ALL, "rus");
 
-    const char* reqFile = "C:/Users/Admin/source/repos/client/REQUEST.bin";
-    const char* ansFile = "C:/Users/Admin/source/repos/client/ANSWER.bin";
+    const char* reqFile = "C:/Users/Admin/source/repos/client/REQUEST.txt";
+    const char* ansFile = "C:/Users/Admin/source/repos/client/ANSWER.txt";
 
     ofstream outReq;
     ifstream inAns;
@@ -93,9 +93,9 @@ using namespace std;
 struct ClientRequest
 {
     char lastName[25];
-    int heightVal;
-    int weightVal;
-} CurrentRequest;
+    int height;
+    int weight;
+} CurReq;
 
 int result;
 long filePos = 0;
@@ -105,8 +105,8 @@ int main() {
     ofstream outFile;
     setlocale(LC_ALL, "rus");
 
-    const char* inputFile = "C:/Users/Admin/source/repos/client/REQUEST.bin";
-    const char* outputFile = "C:/Users/Admin/source/repos/client/ANSWER.bin";
+    const char* inputFile = "C:/Users/Admin/source/repos/client/REQUEST.txt";
+    const char* outputFile = "C:/Users/Admin/source/repos/client/ANSWER.txt";
 
     cout << "сервер запущен" << endl;
 
@@ -141,12 +141,12 @@ int main() {
         }
 
         inFile.seekg(filePos, ios::beg);
-        inFile.read((char*)&CurrentRequest, sizeof(CurrentRequest));
+        inFile.read((char*)&CurReq, sizeof(CurReq));
         filePos = inFile.tellg();
         inFile.close();
 
-        double heightMeters = CurrentRequest.heightVal * 0.01;
-        double bmi = CurrentRequest.weightVal / (heightMeters * heightMeters);
+        double heightMeters = CurReq.height * 0.01;
+        double bmi = CurReq.weight / (heightMeters * heightMeters);
 
         if (bmi < 18.5)
             result = 0;
@@ -163,10 +163,11 @@ int main() {
         outFile.write((char*)&result, sizeof(result));
         outFile.close();
 
-        cout << "Обработан клиент: " << CurrentRequest.lastName
-            << " (рост: " << CurrentRequest.heightVal
-            << ", вес: " << CurrentRequest.weightVal
+        cout << "Обработан клиент: " << CurReq.lastName
+            << " (рост: " << CurReq.height
+            << ", вес: " << CurReq.weight
             << ") - код результата: " << result << endl;
     }
     return 0;
-}                                                                
+}                       
+
